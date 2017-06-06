@@ -11,12 +11,21 @@ function sayHi(){
 	alert('Hi');
 }
 
+function acceptWork(id){
+	alert(id);
+	$.post('core.php?do=acceptwork',{id: id},function(){
+		$('#test_dataTable').DataTable().ajax.reload();
+	});
+}
+
 $(document).ready(function() {
-	
-	var dataTableAjax = $('#test_dataTable').dataTable({
+
+	var $dataTableAjax = $('#test_dataTable').dataTable({
 		"fixedHeader": true,
+		"select": true,
 		"ajax": {
 			"url": 'core.php?do=loaddata'
 		}
 	});
+
 });

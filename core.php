@@ -20,7 +20,7 @@
 	if (isset($_GET['do'])) {
 
 		if ($_GET['do'] == 'loaddata'){
-			include 'config/dbconnect.php';
+			include_once 'config/dbconnect.php';
 
 			$permission = '';
 			$json_data = array();
@@ -49,18 +49,22 @@
 				$result = $mysqli->query($sql);
 				if ($result->num_rows > 0) {
 					while ($output = $result->fetch_array(MYSQLI_ASSOC)) {
-						$nestedData   = array();
-						$nestedData[] = $output['lot'];
-						$nestedData[] = $output['number'];
-						$nestedData[] = $output['lot_name'];
-						$nestedData[] = $output['location_code'];
-						$nestedData[] = $output['lot_address'];
-						$nestedData[] = $output['contact_name'];
-						$nestedData[] = $output['contact_tel'];
-						$nestedData[] = $output['lot_district'];
-						$nestedData[] = $output['status'];
-						$nestedData[] = $output['lot_type'];
-						$json_data[]  = $nestedData;
+						if($output['accept'] == 0) {
+							$nestedData   = array();
+							$nestedData[] = $output['lot'];
+							$nestedData[] = $output['number'];
+							$nestedData[] = $output['lot_name'];
+							$nestedData[] = $output['location_code'];
+							$nestedData[] = $output['lot_address'];
+							$nestedData[] = $output['contact_name'];
+							$nestedData[] = $output['contact_tel'];
+							$nestedData[] = $output['lot_district'];
+							$nestedData[] = $output['status'];
+							$nestedData[] = $output['lot_type'];
+							$nestedData[] = 
+								'<button class="btn" onclick="acceptWork('.$output['_id'].')">รับงาน</button>';
+							$json_data[]  = $nestedData;
+						}
 					}
 				}
 			}
@@ -68,6 +72,16 @@
 				'data'  => $json_data
 			]);
 			$mysqli->close();
+		}
+		else if ($_GET['do'] == 'acceptwork') {
+			$id = $_POST['id'];
+
+			include_once "config/dbconnect.php";
+			$sql = ' UPDATE '.$project_info_tb;
+			$sql.= ' SET accept = 1';
+			$sql.= ' WHERE _id = '.$id;
+			$result = $mysqli->query($sql);
+            $mysqli->close();
 		}
 	}
 ?>
